@@ -211,23 +211,57 @@ switch prompt_s
             [norm_data_train,train_target_min,train_target_range] = norma(Out_train,'define');
             %interval with the number of neurons you want to train the neural network with
             
-            max_number_neurons = input('Maximum number of neurons to test?  ]1,+Inf[ _ ') ;
-            min_number_neurons = input(['Minimum number of neurons to test?  ]1,',num2str(max_number_neurons),'[ _ ']) ;
-            interv_neurons = input('Step size of neurons to test? _ ') ;
-            test_neurons = min_number_neurons:interv_neurons:max_number_neurons;
-            c = input('Would you like to:\n[1] - test several training percentages \n[2] - perform monte carlo analysis on several number of neurons\n ','s');
+           
+            c = input('Would you like to:\n[1] - test several training percentages \n[2] - multi run 1st hidden layer finder\n[3] - multi run 2nd hidden layer finder \n','s');
             
             switch c
                 case '1'
-                    
+                    % vary training percentage
+                    %interval with the number of neurons you want to train the neural network with
+                    max_number_neurons = input('Maximum number of neurons to test?  ]1,+Inf[ _ ') ;
+                    min_number_neurons = input(['Minimum number of neurons to test?  ]1,',num2str(max_number_neurons),'[ _ ']) ;
+                    interv_neurons = input('Step size of neurons to test? _ ') ;
+                    test_neurons = min_number_neurons:interv_neurons:max_number_neurons;
                     %interval with the percentages you want to train the neural network with
                     max_P = input(']0,1[ Maximum training relation to test?   ');
                     min_P = input([']0,',num2str(max_P),'[ Minimum training relation to test?   ']);
                     interv_P = input('Step size to test?  ');
                     P = min_P:interv_P:max_P; %percentage of data training
+                    warn = length(test_neurons)*length(P); % to warn 
+                    if warn > 100
+                        answer = input(['Are you sure you want to generate ', num2str(warn), ' points?[y,n]'],'s');
+                        if answer == 'y'            
+                        search_ann(norm_data_train,test_neurons,P,c) ;
+                        end
+                    else
+                        search_ann(norm_data_train,test_neurons,P,c) ;
+                    end
+                       
+
                 case '2'
-                    max_P = input('[1,+Inf[ Number of Monte Carlo runs?   ');
-                    P = max_P; %percentage of data training
+                    %vary the number of neurons of the first layer for a
+                    %fixed percentage
+                    %interval with the number of neurons you want to train the neural network with
+                    max_number_neurons = input('Maximum number of neurons to test?  ]1,+Inf[ _ ') ;
+                    min_number_neurons = input(['Minimum number of neurons to test?  ]1,',num2str(max_number_neurons),'[ _ ']) ;
+                    interv_neurons = input('Step size of neurons to test? _ ') ;
+                    test_neurons = min_number_neurons:interv_neurons:max_number_neurons;
+                    P = input('[1,+Inf[ Number of runs?   ');
+                     
+                    search_ann(norm_data_train,test_neurons,P,c) ;
+
+                case '3'
+                    %vary the number of neurons of the second layer for a
+                    %fixed percentage
+                    %interval with the number of neurons you want to train the neural network with
+                    max_number_neurons = input('Maximum number of neurons to test?  ]1,+Inf[ _ ') ;
+                    min_number_neurons = input(['Minimum number of neurons to test?  ]1,',num2str(max_number_neurons),'[ _ ']) ;
+                    interv_neurons = input('Step size of neurons to test? _ ') ;
+                    test_neurons = min_number_neurons:interv_neurons:max_number_neurons;
+                    P = input('[1,+Inf[ Number of runs?   ');
+                    search_ann(norm_data_train,test_neurons,P,c) ;
+
+                    
             end
         
         
@@ -237,7 +271,6 @@ switch prompt_s
         
         %Testing severall combinations of number of neurons and differente relation between train and data
         
-        search_ann(norm_data_train,test_neurons,P,c) ;
         clc
         
         res = input('Press enter to use another program or c to close','s');
@@ -414,6 +447,7 @@ switch prompt_s
         Lin_Data = FileData.lin_train; 
                 
         plot_mean_model_std_out(net,Fixed_L,Output_Data);
+        plot_model_out(net,Fixed_L,Output_Data);
         plot_mean_model_std_sl(net,Fixed_L,Sat_Data,VD_sat);
         plot_mean_model_std_sl(net,Fixed_L,Lin_Data,VD_lin); 
         clc
@@ -458,7 +492,7 @@ switch prompt_s
         
         get_gm(net,Fixed_L,Sat_Data,VD_sat);
         get_gm(net,Fixed_L,Lin_Data,VD_lin);
-        get_gds(net,Fixed_L,Output_Data);
+%         get_gds(net,Fixed_L,Output_Data);
 
         res = input('Press enter to use another program or c to close','s');
         switch res
