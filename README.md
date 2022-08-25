@@ -2,7 +2,7 @@
 Generate n-type transistor models using neural networks with Matlab 2018R
 % 1.1st version
 % Author: Rui Guilhoto
-% Intrusctions: 
+% Instructions: 
 % Warning: this program does not contain the required code to run on all computers 
 % That functionality can be adapted by the user. For now the program can run entirely on command window on my pc
 % as long as data is structured in similar fashion.
